@@ -33,7 +33,7 @@ class Database:
         res = self.db_cursor.execute("""
             SELECT * 
             FROM transactions
-            WHERE date LIKE ? ||'%';
+            WHERE date LIKE ? || '%';
         """, (year_month,))
 
         return res.fetchall()
