@@ -38,12 +38,28 @@ class Database:
 
         return self.db_cursor.rowcount
 
+    def delete_all(self):
+        self.db_cursor.execute("""
+            DELETE FROM transactions;
+        """)
+        self.connection.commit()
+
+        return self.db_cursor.rowcount
+
     def get_monthly_transactions(self, year_month):
         res = self.db_cursor.execute("""
             SELECT * 
             FROM transactions
             WHERE date LIKE ? || '%';
         """, (year_month,))
+
+        return res.fetchall()
+
+    def get_all_transactions(self):
+        res = self.db_cursor.execute("""
+            SELECT * 
+            FROM transactions;
+        """)
 
         return res.fetchall()
 

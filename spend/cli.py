@@ -60,6 +60,16 @@ def delete(
         print(f"The row with ID '{id}' was successfully deleted!")
 
 @app.command()
+def deleteall():
+    database = Database()
+    rows_deleted = database.delete_all()
+
+    if rows_deleted == 0:
+        print("There were no entries to delete!")
+    else:
+        print(f"Successfully deleted {rows_deleted} entries!")
+
+@app.command()
 def summary(
     month: str = typer.Option(date.today().isoformat()[:7], "--month", "-m")
 ):
@@ -68,6 +78,22 @@ def summary(
 
     ui = Ui()
     ui.print_summary(transactions)
+
+@app.command()
+def summaryall():
+    database = Database()
+    transactions = database.get_all_transactions()
+
+    ui = Ui()
+    ui.print_summary(transactions)
+
+@app.command()
+def transactionsall():
+    database = Database()
+    transactions = database.get_all_transactions()
+
+    ui = Ui()
+    ui.print_summary_all(transactions)
 
 if __name__ == "__main__":
     app()
