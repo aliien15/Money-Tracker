@@ -29,6 +29,15 @@ class Database:
 
         self.connection.commit()
 
+    def delete_transaction(self, id):
+        self.db_cursor.execute("""
+            DELETE FROM transactions
+            WHERE id = ?;
+        """, (id,))
+        self.connection.commit()
+
+        return self.db_cursor.rowcount
+
     def get_monthly_transactions(self, year_month):
         res = self.db_cursor.execute("""
             SELECT * 
@@ -41,7 +50,7 @@ class Database:
     #  0      1      2       3          4        5
     # (id, amount, type, category, description, date)
     # example = (1, 15.50, "EXPENSE", "Food", "Lunch", "2026-07-02")
-    def calculate_summary(transactions):
+    def calculate_summary(self, transactions):
         income = 0
         expenses = 0
 

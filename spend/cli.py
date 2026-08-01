@@ -46,5 +46,17 @@ def print_success_log_transaction(amount, transaction_type, category, descriptio
     print(f"Description: {description}")
     print(f"Date: {entry_date}")
 
+@app.command()
+def delete(
+        id: int = typer.Option(..., "--id", "-i")
+        ):
+    database = Database()
+    rows_deleted = database.delete_transaction(id)
+
+    if rows_deleted == 0:
+        print(f"There were no rows with the ID '{id}' to delete!")
+    else:
+        print(f"The row with ID '{id}' was successfully deleted!")
+
 if __name__ == "__main__":
     app()
