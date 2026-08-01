@@ -26,6 +26,7 @@ spend-cli/
 ├── tests/            # Automated test suites for CLI, database, and UI logic
 ├── README.md
 └── .gitignore
+```
 
 ---
 
