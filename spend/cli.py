@@ -1,6 +1,7 @@
 import typer
 from datetime import date
 from database import Database
+from ui import Ui
 
 app = typer.Typer()
 
@@ -57,6 +58,16 @@ def delete(
         print(f"There were no rows with the ID '{id}' to delete!")
     else:
         print(f"The row with ID '{id}' was successfully deleted!")
+
+@app.command()
+def summary(
+    month: str = typer.Option(date.today().isoformat()[:7], "--month", "-m")
+):
+    database = Database()
+    transactions = database.get_monthly_transactions(month)
+
+    ui = Ui()
+    ui.print_summary(transactions)
 
 if __name__ == "__main__":
     app()
