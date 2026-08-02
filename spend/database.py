@@ -2,8 +2,8 @@ import sqlite3
 
 class Database:
 
-    def __init__(self):
-        self.connection = sqlite3.connect("data.db")
+    def __init__(self, db_name="data.db"):
+        self.connection = sqlite3.connect(db_name)
         self.db_cursor = self.connection.cursor()
 
         query = """

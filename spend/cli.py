@@ -4,6 +4,7 @@ from database import Database
 from ui import Ui
 
 app = typer.Typer()
+DB_NAME = "data.db"
 
 @app.command()
 def log(
@@ -17,7 +18,7 @@ def log(
     if not is_args_valid(amount, transaction_type, entry_date):
         return
     
-    database = Database()
+    database = Database(DB_NAME)
     database.insert_transaction(amount, transaction_type, category, description, entry_date)
     print_success_log_transaction(amount, transaction_type, category, description, entry_date)
 
@@ -51,7 +52,7 @@ def print_success_log_transaction(amount, transaction_type, category, descriptio
 def delete(
         id: int = typer.Option(..., "--id", "-i")
         ):
-    database = Database()
+    database = Database(DB_NAME)
     rows_deleted = database.delete_transaction(id)
 
     if rows_deleted == 0:
@@ -61,7 +62,7 @@ def delete(
 
 @app.command()
 def deleteall():
-    database = Database()
+    database = Database(DB_NAME)
     rows_deleted = database.delete_all()
 
     if rows_deleted == 0:
@@ -73,7 +74,7 @@ def deleteall():
 def summary(
     month: str = typer.Option(date.today().isoformat()[:7], "--month", "-m")
 ):
-    database = Database()
+    database = Database(DB_NAME)
     transactions = database.get_monthly_transactions(month)
 
     ui = Ui()
@@ -81,7 +82,7 @@ def summary(
 
 @app.command()
 def summaryall():
-    database = Database()
+    database = Database(DB_NAME)
     transactions = database.get_all_transactions()
 
     ui = Ui()
@@ -89,7 +90,7 @@ def summaryall():
 
 @app.command()
 def transactionsall():
-    database = Database()
+    database = Database(DB_NAME)
     transactions = database.get_all_transactions()
 
     ui = Ui()
