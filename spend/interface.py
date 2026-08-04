@@ -13,6 +13,12 @@ class Interface(ctk.CTk):
         self.title("Money Tracker")
         self.geometry("700x450")
 
+        self.build_tab_menu()
+        
+        self.build_add_tab()
+        self.build_history_tab()
+
+    def build_tab_menu(self):
         self.tabview = ctk.CTkTabview(self)
         self.tabview.grid(row=0, column=0, padx=20, pady=20, sticky="nsew")
 
@@ -23,13 +29,14 @@ class Interface(ctk.CTk):
         self.tab_history = self.tabview.add("History")
         self.tab_summary = self.tabview.add("Summary")
 
+    def build_add_tab(self):
         self.amount_entry = ctk.CTkEntry(self.tab_add, placeholder_text="0.00")
 
         self.type_dropdown = ctk.CTkComboBox(
             self.tab_add, 
             values=["INCOME", "EXPENSE"]
         )
-        
+
         self.category_entry = ctk.CTkEntry(self.tab_add, placeholder_text="General")
 
         self.description_entry = ctk.CTkEntry(self.tab_add, placeholder_text="No description")
@@ -50,6 +57,40 @@ class Interface(ctk.CTk):
         self.description_entry.grid(row=3, column=0, padx=20, pady=10, sticky="ew")
         self.date_entry.grid(row=4, column=0, padx=20, pady=10, sticky="ew")
         self.save_btn.grid(row=5, column=0, padx=20, pady=(10, 20), sticky="ew")
+
+    def build_history_tab(self):
+        self.tab_history.grid_rowconfigure(0, weight=1)
+        self.tab_history.grid_columnconfigure(0, weight=1)
+
+        self.history_list = ctk.CTkScrollableFrame(
+            self.tab_history,
+            label_text="Saved Transactions"
+        )
+        self.history_list.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+        self.history_list.grid_columnconfigure(0, weight=1)
+        self.load_history()
+
+    def load_history(self):
+        for widget in self.history_list.winfo_children():
+            widget.destroy()
+
+        transactions = self.database.get_all_transactions()
+
+        for index, tx in enumerate(transactions):
+            tx_id = tx[0]
+            display_text = f"{tx[5]} | {tx[2]} | ${tx[1]:.2f} | {tx[3]} ({tx[4]})"
+
+            label = ctk.CTkLabel(self.history_list, text=display_text, anchor="w")
+            label.grid(row=index, column=0, padx=10, pady=5, sticky="ew")
+
+            delete_btn = ctk.CTkButton(
+                self.history_list, 
+                text="Delete", 
+                width=60,
+                fg_color="red",
+                command=lambda id_to_delete=tx_id: self.on_delete_clicked(id_to_delete)
+            )
+            delete_btn.grid(row=index, column=1, padx=10, pady=5)
 
     def on_save_clicked(self):
         try:
@@ -73,6 +114,12 @@ class Interface(ctk.CTk):
             self.description_entry.delete(0, "end")
             self.date_entry.delete(0, "end")
             self.date_entry.insert(0, date.today().isoformat())
+
+            self.load_history()
+
+    def on_delete_clicked(self, id):
+        self.database.delete_transaction(id)
+        self.load_history()
 
 if __name__ == "__main__":
     app = Interface(Database())
