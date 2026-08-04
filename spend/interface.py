@@ -11,10 +11,9 @@ class Interface(ctk.CTk):
         self.database = database
 
         self.title("Money Tracker")
-        self.geometry("700x450")
+        self.geometry("750x450")
 
         self.build_tab_menu()
-        
         self.build_add_tab()
         self.build_history_tab()
 
@@ -67,21 +66,45 @@ class Interface(ctk.CTk):
             label_text="Saved Transactions"
         )
         self.history_list.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
-        self.history_list.grid_columnconfigure(0, weight=1)
+        
+        self.history_list.grid_columnconfigure(4, weight=1)
+        
         self.load_history()
 
     def load_history(self):
         for widget in self.history_list.winfo_children():
             widget.destroy()
 
+        headers = ["Date", "Type", "Amount", "Category", "Description", "Action"]
+        for col_idx, header_text in enumerate(headers):
+            header_label = ctk.CTkLabel(
+                self.history_list, 
+                text=header_text, 
+                font=ctk.CTkFont(weight="bold")
+            )
+            header_label.grid(row=0, column=col_idx, padx=10, pady=(5, 10), sticky="w")
+
         transactions = self.database.get_all_transactions()
 
         for index, tx in enumerate(transactions):
             tx_id = tx[0]
-            display_text = f"{tx[5]} | {tx[2]} | ${tx[1]:.2f} | {tx[3]} ({tx[4]})"
+            row_data = [
+                tx[5], # Date
+                tx[2], # Type
+                f"${tx[1]:.2f}", # Amount
+                tx[3], # Category
+                tx[4] # Description
+            ]
 
-            label = ctk.CTkLabel(self.history_list, text=display_text, anchor="w")
-            label.grid(row=index, column=0, padx=10, pady=5, sticky="ew")
+            for col_idx, text_value in enumerate(row_data):
+                cell_label = ctk.CTkLabel(self.history_list, text=text_value, anchor="w")
+                cell_label.grid(
+                    row=index + 1, 
+                    column=col_idx, 
+                    padx=10, 
+                    pady=5, 
+                    sticky="w"
+                )
 
             delete_btn = ctk.CTkButton(
                 self.history_list, 
@@ -90,22 +113,21 @@ class Interface(ctk.CTk):
                 fg_color="red",
                 command=lambda id_to_delete=tx_id: self.on_delete_clicked(id_to_delete)
             )
-            delete_btn.grid(row=index, column=1, padx=10, pady=5)
+            delete_btn.grid(row=index + 1, column=5, padx=10, pady=5)
 
     def on_save_clicked(self):
         try:
             float(self.amount_entry.get())
             date.fromisoformat(self.date_entry.get())
         except ValueError:
-            print("There was an error while inserting your data! Did you format your amount and date correctly?")
-            print("For amount, make sure to use 'XXXX.XX' (with a '.', not a ',')")
-            print("For the date, make sure to use the 'YYYY-MM-DD' format")
+            print("Error: Check your amount (e.g. 12.50) and date format (YYYY-MM-DD).")
         else:
             amount_text = self.amount_entry.get()
             selected_type = self.type_dropdown.get()
             category = self.category_entry.get()
             description = self.description_entry.get()
             selected_date = self.date_entry.get()
+            
             self.database.insert_transaction(amount_text, selected_type, category, description, selected_date)
             print(f"Saved! Amount: '{amount_text}', Type: '{selected_type}'")
 
@@ -117,8 +139,8 @@ class Interface(ctk.CTk):
 
             self.load_history()
 
-    def on_delete_clicked(self, id):
-        self.database.delete_transaction(id)
+    def on_delete_clicked(self, tx_id):
+        self.database.delete_transaction(tx_id)
         self.load_history()
 
 if __name__ == "__main__":

@@ -50,7 +50,8 @@ class Database:
         res = self.db_cursor.execute("""
             SELECT * 
             FROM transactions
-            WHERE date LIKE ? || '%';
+            WHERE date LIKE ? || '%'
+            ORDER BY date DESC, id DESC;
         """, (year_month,))
 
         return res.fetchall()
@@ -58,7 +59,8 @@ class Database:
     def get_all_transactions(self):
         res = self.db_cursor.execute("""
             SELECT * 
-            FROM transactions;
+            FROM transactions
+            ORDER BY date DESC, id DESC;
         """)
 
         return res.fetchall()
