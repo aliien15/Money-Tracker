@@ -1,17 +1,28 @@
-# 💸 Spending CLI
+# 💸 Money Tracker
 
-A modern, terminal-based personal finance and transaction tracking CLI built with **Python**.
+A modern personal finance and transaction tracking application built with **Python**, featuring both a **simple Desktop GUI** and a **powerful Terminal CLI**.
 
-This CLI lets you log income and expenses, inspect transaction information, and view financial summaries directly from your terminal! All the data is saved in a local SQLite database, which requires 0 extra setup!
+Whether you prefer clicking through a clean dark-mode desktop interface or running rapid terminal commands, this app lets you log income and expenses, inspect transaction history, and view real-time financial summaries—all backed by a zero-configuration local SQLite database!
 
 ---
 
 ## ✨ Features
 
-* **Strict Input Validation:** Automatically validates positive amounts, normalizes transaction types (`INCOME`/`EXPENSE`), and verifies ISO date formats (`YYYY-MM-DD`) before touching the database.
-* **Beautiful Terminal UI:** Used the `Rich` library to render clean, color-coded transaction tables and financial summaries (green for income, red for expenses, dynamic color-coding for net savings).
-* **Zero-Config Database:** Uses SQLite (`data.db`) with automatic table creation (`IF NOT EXISTS`) and safe, parameterized queries (`?`) to prevent SQL injection.
-* **Modular MVC Design:** Clear separation of concerns between database queries (`Model`), Rich presentation rendering (`View`), and CLI command routing (`Controller`).
+### 🖥️ Desktop GUI
+* **Modern Dark/Light Mode UI:** Built for a simple, system-aware aesthetic that looks great on Windows, macOS, and Linux.
+* **Real-Time Financial Dashboard:** Instantly view color-coded summary cards for **Total Income**, **Total Expenses**, and **Net Balance** that automatically refresh whenever data changes.
+* **Interactive Multi-Column Grid:** Browse transactions in a responsive spreadsheet-style layout with expanding description columns and inline **Delete** buttons for quick management.
+* **Input Validation & Safety:** Catch formatting errors early with built-in checks for numerical amounts (`XXXX.XX`) and ISO dates (`YYYY-MM-DD`).
+
+### ⌨️ Terminal CLI
+* **Rapid Terminal Logging:** Log transactions, inspect ledgers, and check monthly summaries without leaving your command line.
+* **Beautiful Terminal Formatting:** Uses the `Rich` library to render tables and visual indicators.
+* **Strict Command Validation:** Built-in validation ensures clean data entry before touching the database.
+
+### 🗄️ Zero-Config Database
+* **Local SQLite Storage:** Uses a single `data.db` file with zero setup required.
+* **SQL-Level Sorting & Optimization:** Automatically sorts your transactions from newest to oldest to ensure accurate chronological ordering.
+* **SQL Injection Prevention:** 100% parameterized queries (`?`) for safe and reliable data handling.
 
 ---
 
@@ -20,10 +31,11 @@ This CLI lets you log income and expenses, inspect transaction information, and 
 ```text
 spend-cli/
 ├── spend/
-│   ├── cli.py        # Controller: Typer command registration & input validation
+│   ├── interface.py  # Desktop GUI: CustomTkinter multi-tab interface & dashboard
+│   ├── cli.py        # CLI Controller: Typer command registration & validation
 │   ├── database.py   # Model: SQLite schema, CRUD operations & aggregation logic
-│   ├── ui.py         # View: Rich table formatting & dynamic color rendering
-├── tests/            # Automated test suites for CLI, database, and UI logic
+│   ├── ui.py         # CLI View: Rich table formatting & terminal color rendering
+├── tests/            # Automated test suites for database, GUI, and CLI logic
 ├── README.md
 └── .gitignore
 ```
@@ -34,7 +46,7 @@ spend-cli/
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/aliien15/Spend-CLI.git](https://github.com/aliien15/Spend-CLI.git)
+   git clone [https://github.com/aliien15/Money-Tracker.git](https://github.com/aliien15/Money-Tracker.git)
    cd spend-cli
    ```
 
@@ -49,14 +61,28 @@ spend-cli/
 
 3. **Install dependencies:**
    ```bash
-   pip install typer rich
+   pip install typer rich customtkinter
    ```
 
 ---
 
-## 📖 Command Reference
+## 🖥️ Launching the Desktop Application
 
-All commands are run via the main entry point in `spend/cli.py`.
+To open the graphical desktop interface, run:
+
+```bash
+python spend/interface.py
+```
+
+* **Add Tab:** Enter an amount, select `INCOME` or `EXPENSE`, add an optional category/description, and save.
+* **History Tab:** Scroll through your sorted ledger and remove entries using the inline **Delete** buttons.
+* **Summary Tab:** Check your real-time **Total Income**, **Total Expenses**, and **Net Balance** dashboard cards.
+
+---
+
+## 📖 CLI Command Reference
+
+All command-line operations are executed via `spend/cli.py`.
 
 | Command | Description | Key Options / Flags | Default Value |
 | :--- | :--- | :--- | :--- |
@@ -69,7 +95,7 @@ All commands are run via the main entry point in `spend/cli.py`.
 
 ---
 
-## 💡 Usage Examples
+## 💡 CLI Usage Examples
 
 ### Log an Expense (with custom date and description)
 ```bash
@@ -101,5 +127,6 @@ python spend/cli.py delete -i 3
 ## 🛠️ Built With
 
 * **[Python 3](https://www.python.org/)** - Standard Library (`sqlite3`, `datetime`)
+* **[CustomTkinter](https://customtkinter.tomschimansky.com/)** - Modern, dark-mode desktop GUI framework
 * **[Typer](https://typer.tiangolo.com/)** - Modern CLI application builder
 * **[Rich](https://rich.readthedocs.io/)** - Rich text and table rendering in the terminal
