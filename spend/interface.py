@@ -91,7 +91,7 @@ class Interface(ctk.CTk):
             row_data = [
                 tx[5], # Date
                 tx[2], # Type
-                f"${tx[1]:.2f}", # Amount
+                f"{tx[1]:.2f}", # Amount
                 tx[3], # Category
                 tx[4] # Description
             ]
