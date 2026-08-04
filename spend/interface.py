@@ -16,6 +16,7 @@ class Interface(ctk.CTk):
         self.build_tab_menu()
         self.build_add_tab()
         self.build_history_tab()
+        self.build_summary_tab()
 
     def build_tab_menu(self):
         self.tabview = ctk.CTkTabview(self)
@@ -115,6 +116,75 @@ class Interface(ctk.CTk):
             )
             delete_btn.grid(row=index + 1, column=5, padx=10, pady=5)
 
+    def build_summary_tab(self):
+        income_card = ctk.CTkFrame(self.tab_summary)
+        income_card.grid(row=0, column=0, padx=10, pady=20, sticky="nsew")
+
+        income_title = ctk.CTkLabel(
+            income_card, 
+            text="TOTAL INCOME", 
+            font=ctk.CTkFont(size=14, weight="bold")
+        )
+        income_title.pack(pady=(15, 5))
+
+        self.income_val_label = ctk.CTkLabel(
+            income_card, 
+            text="0.00", 
+            font=ctk.CTkFont(size=28, weight="bold"),
+            text_color="green"
+        )
+        self.income_val_label.pack(pady=(0, 15))
+
+        expense_card = ctk.CTkFrame(self.tab_summary)
+        expense_card.grid(row=0, column=1, padx=10, pady=20, sticky="nsew")
+
+        expense_title = ctk.CTkLabel(
+            expense_card,
+            text="TOTAL EXPENSES",
+            font=ctk.CTkFont(size=14, weight="bold")
+        )
+        expense_title.pack(pady=(15, 5))
+
+        self.expense_val_label = ctk.CTkLabel(
+            expense_card,
+            text="0.00",
+            font=ctk.CTkFont(size=28, weight="bold"),
+            text_color="red"
+        )
+        self.expense_val_label.pack(pady=(0, 15))
+
+        balance_card = ctk.CTkFrame(self.tab_summary)
+        balance_card.grid(row=0, column=2, padx=10, pady=20, sticky="nsew")
+
+        balance_title = ctk.CTkLabel(
+            balance_card,
+            text="TOTAL BALANCE",
+            font=ctk.CTkFont(size=14, weight="bold")
+        )
+        balance_title.pack(pady=(15, 5))
+
+        self.balance_val_label = ctk.CTkLabel(
+            balance_card,
+            text="0.00",
+            font=ctk.CTkFont(size=28, weight="bold"),
+            text_color="white"
+        )
+        self.balance_val_label.pack(pady=(0, 15))
+
+        self.load_summary()
+        
+        self.tab_summary.grid_columnconfigure(0, weight=1)
+        self.tab_summary.grid_columnconfigure(1, weight=1)
+        self.tab_summary.grid_columnconfigure(2, weight=1)
+
+    def load_summary(self):
+        transactions = self.database.get_all_transactions()
+        income, expenses, balance = self.database.calculate_summary(transactions)
+        
+        self.income_val_label.configure(text=f"${income:,.2f}")
+        self.expense_val_label.configure(text=f"${expenses:,.2f}")
+        self.balance_val_label.configure(text=f"${balance:,.2f}")
+
     def on_save_clicked(self):
         try:
             float(self.amount_entry.get())
@@ -138,10 +208,12 @@ class Interface(ctk.CTk):
             self.date_entry.insert(0, date.today().isoformat())
 
             self.load_history()
+            self.load_summary()
 
     def on_delete_clicked(self, tx_id):
         self.database.delete_transaction(tx_id)
         self.load_history()
+        self.load_summary()
 
 if __name__ == "__main__":
     app = Interface(Database())
