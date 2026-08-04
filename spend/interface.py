@@ -181,9 +181,9 @@ class Interface(ctk.CTk):
         transactions = self.database.get_all_transactions()
         income, expenses, balance = self.database.calculate_summary(transactions)
         
-        self.income_val_label.configure(text=f"${income:,.2f}")
-        self.expense_val_label.configure(text=f"${expenses:,.2f}")
-        self.balance_val_label.configure(text=f"${balance:,.2f}")
+        self.income_val_label.configure(text=f"{income:,.2f}")
+        self.expense_val_label.configure(text=f"{expenses:,.2f}")
+        self.balance_val_label.configure(text=f"{balance:,.2f}")
 
     def on_save_clicked(self):
         try:
